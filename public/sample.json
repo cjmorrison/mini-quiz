@@ -1,0 +1,37 @@
+{
+    "interactiveTitle": "My Mini Quiz",
+    "questionPool": [{
+            "text": "What is the average number of kittens in a litter?",
+            "type": "single",
+            "answers": [
+                {"text": "10 to 30"},
+                {"text": "3 to 4", "isCorrect":true},
+                {"text": "0.3 to 1.5"},
+                {"text": "5 but occationaly one is a puppy"}
+            ],
+            "feedback": "Most litters contain three to four kittens."
+        },
+        {
+            "text": "<p>What breed is this?</p><img src='https://c8.alamy.com/comp/2M0PY7T/cat-tabby-kitten-2M0PY7T.jpg' alt='a striped kitten'/>",
+            "type": "single",
+            "answers": [
+                {"text": "A common tabby"},
+                {"text": "A striped fur phyton"},
+                {"text": "A common tabby", "isCorrect":true},
+                {"text": "Just a little guy"}
+            ],
+            "feedback": "This is a common tabby cat."
+        },
+        {
+            "text": "Has a cat ever to gone to space?",
+            "type": "single",
+            "answers": [
+    
+                {"text": "True", "isCorrect":true},
+                {"text": "False"}
+            ],
+            "feedback": "Félicette was a stray Parisian cat that became the first feline launched into space on 18 October 1963 as part of the French space program. She was one of 14 female cats trained for spaceflight."
+        }
+    ]
+
+}
