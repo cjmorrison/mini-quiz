@@ -7,11 +7,26 @@
     display: block;
   }
 
-h2, h3, h4, h5, h6 {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     text-align: left;
   }
 
-  .si_header {
+  .qq_isCorrectIndicator {
+    font-weight: bold;
+  }
+
+  .qq_correct {
+    color: #005e00;
+  }
+
+  .qq_incorrect {
+    color: #5e0000;
+  }
+  .qq_header {
     width: 100%;
   }
   .instructionText {
@@ -19,18 +34,18 @@ h2, h3, h4, h5, h6 {
     text-align: left;
   }
 
-  .si_questionText {
+  .qq_questionText {
     text-align: left;
     padding-bottom: 10px;
+    max-width: 400px;
   }
 
-  .si_answerText {
+  .qq_answerText {
     text-align: left;
     padding: 10px 0px;
   }
 
-  .si_answerButtonContainer {
+  .qq_answerButtonContainer {
     text-align: center;
   }
-
 }

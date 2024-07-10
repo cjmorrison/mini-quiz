@@ -8,10 +8,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
-import MobileStepper from "@mui/material/MobileStepper";
 import Button from "@mui/material/Button";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 interface AnswersData {
   text: string;
@@ -38,6 +35,7 @@ interface StateType {
   questionData: QuestionData;
   displayState: string;
   currentQuestion: number;
+  selectedAnswer: number;
 }
 
 class IntractiveWrapper extends React.Component<PropType, StateType> {
@@ -71,6 +69,7 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
     },
     displayState: "question",
     currentQuestion: 0,
+    selectedAnswer: -1,
   };
 
   constructor(props) {
@@ -183,51 +182,40 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
     return this.state.langData[key] as string;
   };
 
-  /*
-  defineStepper = () => {
-    this.stepperSteps = [];
-    for (let ans = 0; ans < this.state.questionData.answers.length; ans++) {
-      this.stepperSteps.push({
-        label:
-          this.state.questionData.questions[this.state.currentQuestion].text,
-        description: this.state.questionData.answers[ans].text,
+  handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    this.setState({
+      selectedAnswer: parseInt((event.target as HTMLInputElement).value),
+    });
+    return this.state.selectedAnswer;
+  };
+
+  handleNextQuestionSelection = () => {
+    if (
+      this.state.currentQuestion + 1 >=
+      this.state.questionData.questionPool.length
+    ) {
+      this.setState({
+        currentQuestion: 0,
+        displayState: "end",
+      });
+    } else {
+      this.setState({
+        currentQuestion: this.state.currentQuestion + 1,
+        displayState: "question",
       });
     }
   };
 
-  handleNextStep = () => {
-    this.setState({ activeStep: this.state.activeStep + 1 });
-  };
-
-  handlePreviousStep = () => {
-    this.setState({ activeStep: this.state.activeStep - 1 });
-  };
-*/
-
   handleAnswerSelection = () => {
-    // this.correctResponce =
-    //   this.state.questionData.answers[this.state.activeStep].key ===
-    //   this.state.questionData.questions[this.state.currentQuestion].answerKey;
-    // this.setState({ displayState: "feedback" });
-  };
-
-  handleNextQuestionSelection = () => {
-    // if (
-    //   this.state.currentQuestion + 1 >=
-    //   this.state.questionData.questions.length
-    // ) {
-    //   this.setState({
-    //     currentQuestion: 0,
-    //     displayState: "end",
-    //     activeStep: 0,
-    //   });
-    // } else {
-    //   this.setState({
-    //     currentQuestion: this.state.currentQuestion + 1,
-    //     displayState: "question",
-    //     activeStep: 0,
-    //   });
-    // }
+    this.correctResponce =
+      this.state.questionData.questionPool[this.state.currentQuestion].answers[
+        this.state.selectedAnswer
+      ].isCorrect === true;
+    this.setState({
+      selectedAnswer: -1,
+      displayState: "feedback",
+    });
   };
 
   handleReset = () => {
@@ -273,62 +261,40 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
 
       return (
         <Box className="qq_questionDisplay">
-          <Box className="qq_questionText">
+          <Box className="qq_questionProgressText">
             <h3>
               Question {this.state.currentQuestion + 1} of{" "}
               {this.state.questionData.questionPool.length}
             </h3>
-
+            <Box className="qq_questionText">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html:
+                    this.state.questionData.questionPool[
+                      this.state.currentQuestion
+                    ].text,
+                }}
+              ></div>
+            </Box>
+            <br />
             <FormControl id={qid + "_fc"}>
-              <FormLabel id={qid + "_fcLable"}>
-                {
-                  this.state.questionData.questionPool[
-                    this.state.currentQuestion
-                  ].text
-                }
-              </FormLabel>
+              <FormLabel id={qid + "_fcLable"}>Potential answers:</FormLabel>
               <RadioGroup
                 id={qid + "_fcRadGroup"}
                 aria-labelledby="potential answers"
+                onChange={this.handleRadioChange}
               >
                 {listItems}
               </RadioGroup>
             </FormControl>
           </Box>
-          <hr />
-          {}
-          {/* <MobileStepper
-            variant="text"
-            steps={this.state.questionData.answers.length}
-            position="static"
-            activeStep={this.state.activeStep}
-            nextButton={
-              <Button
-                size="small"
-                onClick={this.handleNextStep}
-                disabled={
-                  this.state.activeStep ===
-                  this.state.questionData.answers.length - 1
-                }
-              >
-                Next <KeyboardArrowRight />
-              </Button>
-            }
-            backButton={
-              <Button
-                size="small"
-                onClick={this.handlePreviousStep}
-                disabled={this.state.activeStep === 0}
-              >
-                <KeyboardArrowLeft /> Back
-              </Button>
-            }
-          /> */}
+
           <Box className="qq_answerButtonContainer">
             <Button
               variant="contained"
               size="medium"
               onClick={this.handleAnswerSelection}
+              disabled={this.state.selectedAnswer === -1}
             >
               Select Answer
             </Button>
@@ -354,12 +320,15 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
       return (
         <Box className="qq_feedbackDisplay">
           {correctStatusDisplay()}
-          <p>
-            {
-              this.state.questionData.questionPool[this.state.currentQuestion]
-                .feedback
-            }
-          </p>
+          <br />
+          <div
+            dangerouslySetInnerHTML={{
+              __html:
+                this.state.questionData.questionPool[this.state.currentQuestion]
+                  .feedback,
+            }}
+          ></div>{" "}
+          <br />
           <Button
             variant="contained"
             size="medium"
@@ -402,9 +371,8 @@ class IntractiveWrapper extends React.Component<PropType, StateType> {
         {buildHeader()}
         <div className="instructionText">
           <p>
-            <strong> Instructions: </strong> Select the arrow buttons to cycle
-            for best response to the following statment.Once you have selected
-            the best responce, check your answer with the button below.
+            <strong> Instructions: </strong> Select the most correct answer,
+            then select the Select Answer button.
           </p>
         </div>
         {setDisplayState()}
